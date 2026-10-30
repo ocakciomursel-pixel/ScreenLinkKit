@@ -1,0 +1,27 @@
+name: macOS Build & Tests
+
+on:
+  push:
+    branches: [ main ]
+  pull_request:
+    branches: [ main ]
+
+jobs:
+  macos-build-test:
+    name: Swift Build, XCTest & VideoToolbox Benchmark (macOS 15)
+    runs-on: macos-15
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Swift Version
+        run: swift --version
+
+      - name: Build Release
+        run: swift build -c release
+
+      - name: Run Unit & VideoToolbox Integration Tests
+        run: swift test --parallel
+
+      - name: Run Low-Latency Encode + RTP Packetizer Benchmark
+        run: swift run -c release ScreenLinkDemo --benchmark --frames 60
